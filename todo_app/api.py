@@ -3,6 +3,8 @@
 On garde des endpoints simples et documentés automatiquement par OpenAPI.
 """
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
+from datetime import datetime
 from .repository import InMemoryTodoRepository
 from .service import TodoService
 from .models import TodoCreate, TodoUpdate, TodoInDB
@@ -43,6 +45,36 @@ def delete_todo(todo_id: int):
         _service.delete_todo(todo_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
+
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint for load balancers and monitoring"""
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status": "healthy",
+            "timestamp": datetime.utcnow().isoformat(),
+            "version": "0.1.0",
+            "service": "todo-list-api"
+        }
+    )
+
+
+@app.get("/health/ready")
+def readiness_check():
+    """Readiness check endpoint for Kubernetes"""
+    # In a real application, you would check:
+    # - Database connectivity
+    # - External service dependencies
+    # - Required resources availability
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status": "ready",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    )
 
 
 # point d'entrée pour lancer localement: uvicorn todo_app.api:app

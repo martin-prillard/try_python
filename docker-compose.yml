@@ -1,16 +1,102 @@
 version: '3.8'
+
 services:
   api:
-    build: .
+    build: 
+      context: .
+      target: production
     ports:
       - "8000:8000"
-    env_file: .env
+    environment:
+      - APP_NAME=Todo List API
+      - DEBUG=false
+      - HOST=0.0.0.0
+      - PORT=8000
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - todo-network
+
   web:
-    image: python:3.11-slim
-    volumes:
-      - ./src:/app/src
-    working_dir: /app
-    command: ["bash", "-lc", "pip install hatch && hatch env create && hatch run streamlit run src/todo_app/webapp.py --server.port 8501 --server.headless true"]
+    build:
+      context: .
+      target: production
+    command: ["streamlit", "run", "todo_app/webapp.py", "--server.port=8501", "--server.headless=true", "--server.address=0.0.0.0"]
     ports:
       - "8501:8501"
-    env_file: .env
+    environment:
+      - APP_NAME=Todo List API
+      - DEBUG=false
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      - todo-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    restart: unless-stopped
+    depends_on:
+      - api
+      - web
+    networks:
+      - todo-network
+
+  # Development services
+  api-dev:
+    build:
+      context: .
+      target: builder
+    ports:
+      - "8001:8000"
+    environment:
+      - APP_NAME=Todo List API (Dev)
+      - DEBUG=true
+      - HOST=0.0.0.0
+      - PORT=8000
+      - LOG_LEVEL=DEBUG
+    volumes:
+      - .:/app
+      - /app/.venv
+    command: ["hatch", "run", "start-api"]
+    profiles:
+      - dev
+    networks:
+      - todo-network
+
+  web-dev:
+    build:
+      context: .
+      target: builder
+    ports:
+      - "8502:8501"
+    environment:
+      - APP_NAME=Todo List API (Dev)
+      - DEBUG=true
+    volumes:
+      - .:/app
+      - /app/.venv
+    command: ["hatch", "run", "start-web"]
+    profiles:
+      - dev
+    networks:
+      - todo-network
+
+networks:
+  todo-network:
+    driver: bridge
+
+volumes:
+  app-data:
