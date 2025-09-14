@@ -6,8 +6,14 @@ from __future__ import annotations
 
 import streamlit as st
 import requests
-from .config import settings
-from .logger import logger
+import sys
+import os
+
+# Ajouter le répertoire parent au path pour les imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from todo_app.config import settings
+from todo_app.logger import logger
 
 API_BASE = settings.api_host
 

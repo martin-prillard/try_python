@@ -5,15 +5,16 @@ description = "Exemple pédagogique: todo list en Python avec bonnes pratiques"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
-
-[project.dependencies]
-fastapi = "^0.99.0"
-uvicorn = {extras = ["standard"], version = "^0.22.0"}
-streamlit = "^1.30.0"
-pydantic = "^1.10.13"
-python-dotenv = "^1.0.0"
-requests = "^2.31.0"
-loguru = "^0.7.0"
+dependencies = [
+    "fastapi>=0.99.0",
+    "uvicorn[standard]>=0.22.0",
+    "streamlit>=1.30.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "requests>=2.31.0",
+    "loguru>=0.7.0"
+]
 
 [project.optional-dependencies]
 dev = [
@@ -31,7 +32,7 @@ requires = ["hatchling>=1.15"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
-path = "src/todo_app/__init__.py"
+path = "todo_app/__init__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -39,10 +40,29 @@ dependencies = [
     "uvicorn[standard]",
     "streamlit",
     "pydantic",
+    "pydantic-settings",
     "python-dotenv",
     "requests",
     "loguru",
 ]
 
-tasks.start-api = "uvicorn todo_app.api:app --host 0.0.0.0 --port 8000 --reload"
-tasks.start-web = "streamlit run src/todo_app/webapp.py"
+[tool.hatch.envs.default.scripts]
+start-api = "uvicorn todo_app.api:app --host 0.0.0.0 --port 8000 --reload"
+start-web = "streamlit run todo_app/webapp.py --server.port 8501 --server.headless true"
+
+# Configuration pour uv
+[tool.uv]
+dev-dependencies = [
+    "pytest",
+    "pytest-cov",
+    "pre-commit",
+    "flake8",
+    "black",
+    "mkdocs",
+    "mkdocs-material",
+]
+
+# ✅ Indiquer explicitement le package à inclure
+[tool.hatch.build.targets.wheel]
+packages = ["todo_app"]
+include = ["todo_app/**/*"]
