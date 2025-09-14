@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+  web:
+    image: python:3.11-slim
+    volumes:
+      - ./src:/app/src
+    working_dir: /app
+    command: ["bash", "-lc", "pip install hatch && hatch env create && hatch run streamlit run src/todo_app/webapp.py --server.port 8501 --server.headless true"]
+    ports:
+      - "8501:8501"
+    env_file: .env
