@@ -1,7 +1,8 @@
 """Tests for Pydantic models."""
 
-import pytest
 from datetime import datetime
+
+import pytest
 from pydantic import ValidationError
 
 from todo_app.models import TodoCreate, TodoInDB, TodoUpdate

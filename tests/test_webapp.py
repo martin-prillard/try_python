@@ -1,8 +1,6 @@
 """Tests for Streamlit webapp."""
 
-import pytest
-from unittest.mock import patch, Mock
-import streamlit as st
+from unittest.mock import Mock, patch
 
 from todo_app.webapp import main
 

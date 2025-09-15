@@ -1,12 +1,9 @@
 """Tests for API layer."""
 
-import pytest
+
 from fastapi.testclient import TestClient
-from unittest.mock import patch, Mock
 
 from todo_app.api import app
-from todo_app.models import TodoCreate, TodoUpdate, TodoInDB
-from datetime import datetime
 
 
 class TestTodoAPI:

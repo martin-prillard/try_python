@@ -3,13 +3,14 @@
 On garde des endpoints simples et documentés automatiquement par OpenAPI.
 """
 
+from datetime import datetime
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from datetime import datetime
+
+from .models import TodoCreate, TodoInDB, TodoUpdate
 from .repository import InMemoryTodoRepository
 from .service import TodoService
-from .models import TodoCreate, TodoUpdate, TodoInDB
-from .logger import logger
 
 app = FastAPI(title="Todo List API", version="0.1.0")
 

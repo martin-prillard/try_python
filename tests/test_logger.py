@@ -1,8 +1,6 @@
 """Tests for logger module."""
 
-import pytest
-from unittest.mock import patch, Mock
-import sys
+from unittest.mock import patch
 
 from todo_app.logger import logger, setup_logging
 

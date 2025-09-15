@@ -1,11 +1,10 @@
 """Tests for repository layer."""
 
-import pytest
 from datetime import datetime
 from unittest.mock import patch
 
+from todo_app.models import TodoCreate, TodoUpdate
 from todo_app.repository import InMemoryTodoRepository
-from todo_app.models import TodoCreate, TodoUpdate, TodoInDB
 
 
 class TestInMemoryTodoRepository:

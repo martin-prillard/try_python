@@ -5,10 +5,11 @@ This file is intentionally simple so students can focus on structure.
 
 from __future__ import annotations
 
-import streamlit as st
-import requests
-import sys
 import os
+import sys
+
+import requests
+import streamlit as st
 
 # Ajouter le répertoire parent au path pour les imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -49,7 +50,7 @@ def main() -> None:
 
     try:
         todos = get_todos()
-    except Exception as exc:
+    except Exception:
         st.error("Impossible de récupérer les todos — vérifiez que l'API tourne")
         logger.exception("Erreur récup todos")
         return

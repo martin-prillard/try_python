@@ -4,8 +4,8 @@ For this pedagogical example we use an in-memory store. In production,
 remplacez par une base de données et adaptez les méthodes (SQLAlchemy/ORM).
 """
 
-from typing import Dict, List, Optional
 from datetime import datetime
+
 from .models import TodoCreate, TodoInDB, TodoUpdate
 
 
@@ -17,10 +17,10 @@ class InMemoryTodoRepository:
     """
 
     def __init__(self) -> None:
-        self._data: Dict[int, TodoInDB] = {}
+        self._data: dict[int, TodoInDB] = {}
         self._next_id = 1
 
-    def list(self) -> List[TodoInDB]:
+    def list(self) -> list[TodoInDB]:
         return list(self._data.values())
 
     def create(self, payload: TodoCreate) -> TodoInDB:
@@ -35,10 +35,10 @@ class InMemoryTodoRepository:
         self._next_id += 1
         return todo
 
-    def get(self, todo_id: int) -> Optional[TodoInDB]:
+    def get(self, todo_id: int) -> TodoInDB | None:
         return self._data.get(todo_id)
 
-    def update(self, todo_id: int, payload: TodoUpdate) -> Optional[TodoInDB]:
+    def update(self, todo_id: int, payload: TodoUpdate) -> TodoInDB | None:
         todo = self._data.get(todo_id)
         if not todo:
             return None

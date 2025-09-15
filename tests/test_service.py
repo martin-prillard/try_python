@@ -1,11 +1,12 @@
 """Tests for service layer."""
 
-import pytest
 from unittest.mock import Mock, patch
 
-from todo_app.service import TodoService
-from todo_app.models import TodoCreate, TodoUpdate, TodoInDB
+import pytest
+
+from todo_app.models import TodoCreate, TodoInDB, TodoUpdate
 from todo_app.repository import InMemoryTodoRepository
+from todo_app.service import TodoService
 
 
 class TestTodoService:

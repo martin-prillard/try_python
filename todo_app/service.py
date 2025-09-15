@@ -3,10 +3,10 @@
 La séparation "service/repository" rend le code testable et maintenable.
 """
 
-from typing import List
-from .repository import InMemoryTodoRepository
-from .models import TodoCreate, TodoInDB, TodoUpdate
+
 from .logger import logger
+from .models import TodoCreate, TodoInDB, TodoUpdate
+from .repository import InMemoryTodoRepository
 
 
 class TodoService:
@@ -18,7 +18,7 @@ class TodoService:
     def __init__(self, repo: InMemoryTodoRepository) -> None:
         self.repo = repo
 
-    def list_todos(self) -> List[TodoInDB]:
+    def list_todos(self) -> list[TodoInDB]:
         logger.info("Listing todos")
         return self.repo.list()
 

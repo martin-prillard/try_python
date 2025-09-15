@@ -1,8 +1,9 @@
 """Tests for configuration module."""
 
-import pytest
-from unittest.mock import patch
 import os
+from unittest.mock import patch
+
+import pytest
 
 from todo_app.config import Settings
 
