@@ -1,5 +1,6 @@
 """Tests for service layer - business logic only."""
 
+from datetime import UTC
 from unittest.mock import Mock
 
 import pytest
@@ -44,7 +45,7 @@ class TestTodoService:
         """Test successful todo update."""
         # Create a todo first
         payload = TodoCreate(title="Original Title")
-        created = self.service.create_todo(payload)
+        self.service.create_todo(payload)
 
         # Update it
         update_payload = TodoUpdate(title="Updated Title", completed=True)
@@ -85,8 +86,9 @@ class TestTodoService:
         service = TodoService(mock_repo)
 
         # Test list_todos
-        from datetime import datetime, timezone
-        mock_todos = [TodoInDB(id=1, title="Test", created_at=datetime.now(timezone.utc))]
+        from datetime import datetime
+
+        mock_todos = [TodoInDB(id=1, title="Test", created_at=datetime.now(UTC))]
         mock_repo.list.return_value = mock_todos
 
         result = service.list_todos()
@@ -95,7 +97,7 @@ class TestTodoService:
 
         # Test create_todo
         payload = TodoCreate(title="Test Todo")
-        mock_todo = TodoInDB(id=1, title="Test Todo", created_at=datetime.now(timezone.utc))
+        mock_todo = TodoInDB(id=1, title="Test Todo", created_at=datetime.now(UTC))
         mock_repo.create.return_value = mock_todo
 
         result = service.create_todo(payload)

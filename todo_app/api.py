@@ -5,7 +5,7 @@ On garde des endpoints simples et documentés automatiquement par OpenAPI.
 
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
 from .models import TodoCreate, TodoInDB, TodoUpdate
@@ -37,7 +37,9 @@ def create_todo(payload: TodoCreate, service: TodoService = Depends(get_service)
 
 
 @app.patch("/todos/{todo_id}", response_model=TodoInDB)
-def update_todo(todo_id: int, payload: TodoUpdate, service: TodoService = Depends(get_service)):
+def update_todo(
+    todo_id: int, payload: TodoUpdate, service: TodoService = Depends(get_service)
+):
     """Mettre à jour un todo"""
     try:
         return service.update_todo(todo_id, payload)

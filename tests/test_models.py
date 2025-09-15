@@ -1,6 +1,6 @@
 """Tests for Pydantic models - validation only."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from pydantic import ValidationError
@@ -41,7 +41,7 @@ class TestTodoInDB:
 
     def test_todo_in_db_creation(self):
         """Test creating a TodoInDB instance."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         todo = TodoInDB(
             id=1,
             title="Test Todo",
@@ -57,7 +57,7 @@ class TestTodoInDB:
 
     def test_todo_in_db_defaults(self):
         """Test TodoInDB with default values."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         todo = TodoInDB(id=1, title="Test Todo", created_at=now)
         assert todo.completed is False
         assert todo.description is None

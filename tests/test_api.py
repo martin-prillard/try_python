@@ -15,12 +15,12 @@ class TestTodoAPI:
         # Create a fresh repository and service for each test
         self.repo = InMemoryTodoRepository()
         self.service = TodoService(self.repo)
-        
+
         # Override the dependency
         app.dependency_overrides[get_service] = lambda: self.service
-        
+
         self.client = TestClient(app)
-    
+
     def teardown_method(self):
         """Clean up after each test."""
         app.dependency_overrides.clear()

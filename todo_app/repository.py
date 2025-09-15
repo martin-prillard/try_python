@@ -4,7 +4,7 @@ For this pedagogical example we use an in-memory store. In production,
 remplacez par une base de données et adaptez les méthodes (SQLAlchemy/ORM).
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from .models import TodoCreate, TodoInDB, TodoUpdate
 
@@ -29,7 +29,7 @@ class InMemoryTodoRepository:
             title=payload.title,
             description=payload.description,
             completed=False,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
         self._data[self._next_id] = todo
         self._next_id += 1
