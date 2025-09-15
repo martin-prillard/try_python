@@ -13,22 +13,23 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Install uv
+RUN pip install uv
+
 # Set work directory
 WORKDIR /app
 
 # Copy requirements first for better caching
-COPY pyproject.toml ./
+COPY pyproject.toml uv.lock README.md ./
 
 # Install Python dependencies
-RUN pip install --upgrade pip && \
-    pip install hatch && \
-    hatch env create
+RUN uv sync --frozen --no-dev
 
 # Copy source code
 COPY . .
 
-# Build the package
-RUN hatch build
+# Install hatch and build the package
+RUN pip install hatch && hatch build
 
 # Production stage
 FROM python:3.11-slim as production
@@ -43,6 +44,9 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Install uv
+RUN pip install uv
+
 # Create non-root user
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
@@ -56,7 +60,7 @@ COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/dist/*.whl ./
 
 # Install the package
-RUN /app/.venv/bin/pip install *.whl
+RUN pip install *.whl
 
 # Copy application code
 COPY --from=builder /app/todo_app ./todo_app
