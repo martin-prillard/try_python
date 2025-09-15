@@ -50,7 +50,7 @@ jobs:
           uv run pytest --cov=todo_app --cov-report=xml --cov-report=html --cov-fail-under=85 --junitxml=pytest-report.xml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           file: ./coverage.xml
           flags: unittests
@@ -99,7 +99,7 @@ jobs:
           uv run pytest --cov=todo_app --cov-report=xml --cov-report=html --cov-fail-under=85 --junitxml=pytest-report.xml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           file: ./coverage.xml
           flags: unittests
