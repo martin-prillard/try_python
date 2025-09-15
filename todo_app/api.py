@@ -2,6 +2,7 @@
 
 On garde des endpoints simples et documentés automatiquement par OpenAPI.
 """
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from datetime import datetime
@@ -56,8 +57,8 @@ def health_check():
             "status": "healthy",
             "timestamp": datetime.utcnow().isoformat(),
             "version": "0.1.0",
-            "service": "todo-list-api"
-        }
+            "service": "todo-list-api",
+        },
     )
 
 
@@ -70,10 +71,7 @@ def readiness_check():
     # - Required resources availability
     return JSONResponse(
         status_code=200,
-        content={
-            "status": "ready",
-            "timestamp": datetime.utcnow().isoformat()
-        }
+        content={"status": "ready", "timestamp": datetime.utcnow().isoformat()},
     )
 
 

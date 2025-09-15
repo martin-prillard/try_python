@@ -1,4 +1,5 @@
 """Tests for configuration module."""
+
 import pytest
 from unittest.mock import patch
 import os
@@ -12,7 +13,7 @@ class TestSettings:
     def test_default_settings(self):
         """Test default configuration values."""
         settings = Settings()
-        
+
         # Test default values
         assert settings.app_name == "Todo List API"
         assert settings.debug is False
@@ -20,17 +21,20 @@ class TestSettings:
         assert settings.port == 8000
         assert settings.log_level == "INFO"
 
-    @patch.dict(os.environ, {
-        "APP_NAME": "Test App",
-        "DEBUG": "true",
-        "HOST": "127.0.0.1",
-        "PORT": "9000",
-        "LOG_LEVEL": "DEBUG"
-    })
+    @patch.dict(
+        os.environ,
+        {
+            "APP_NAME": "Test App",
+            "DEBUG": "true",
+            "HOST": "127.0.0.1",
+            "PORT": "9000",
+            "LOG_LEVEL": "DEBUG",
+        },
+    )
     def test_settings_from_environment(self):
         """Test settings loaded from environment variables."""
         settings = Settings()
-        
+
         assert settings.app_name == "Test App"
         assert settings.debug is True
         assert settings.host == "127.0.0.1"
@@ -61,7 +65,7 @@ class TestSettings:
         with patch.dict(os.environ, {"PORT": "65535"}):
             settings = Settings()
             assert settings.port == 65535
-        
+
         with patch.dict(os.environ, {"PORT": "1"}):
             settings = Settings()
             assert settings.port == 1
@@ -69,7 +73,7 @@ class TestSettings:
     def test_log_level_validation(self):
         """Test log level validation."""
         valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
-        
+
         for level in valid_levels:
             with patch.dict(os.environ, {"LOG_LEVEL": level}):
                 settings = Settings()
@@ -84,10 +88,10 @@ class TestSettings:
     def test_settings_immutability(self):
         """Test that settings are immutable after creation."""
         settings = Settings()
-        
+
         # These should not be settable
         with pytest.raises(AttributeError):
             settings.app_name = "New Name"
-        
+
         with pytest.raises(AttributeError):
             settings.debug = True

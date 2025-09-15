@@ -2,6 +2,7 @@
 
 This file is intentionally simple so students can focus on structure.
 """
+
 from __future__ import annotations
 
 import streamlit as st

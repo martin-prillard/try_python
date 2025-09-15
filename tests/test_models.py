@@ -1,4 +1,5 @@
 """Tests for Pydantic models."""
+
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
@@ -51,7 +52,7 @@ class TestTodoInDB:
             title="Test Todo",
             description="Test description",
             completed=False,
-            created_at=now
+            created_at=now,
         )
         assert todo.id == 1
         assert todo.title == "Test Todo"
@@ -62,11 +63,7 @@ class TestTodoInDB:
     def test_todo_in_db_defaults(self):
         """Test TodoInDB with default values."""
         now = datetime.utcnow()
-        todo = TodoInDB(
-            id=1,
-            title="Test Todo",
-            created_at=now
-        )
+        todo = TodoInDB(id=1, title="Test Todo", created_at=now)
         assert todo.completed is False
         assert todo.description is None
 
@@ -84,9 +81,7 @@ class TestTodoUpdate:
     def test_todo_update_all_fields(self):
         """Test updating all fields."""
         update = TodoUpdate(
-            title="New Title",
-            description="New description",
-            completed=True
+            title="New Title", description="New description", completed=True
         )
         assert update.title == "New Title"
         assert update.description == "New description"

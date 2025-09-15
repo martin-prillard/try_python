@@ -2,6 +2,7 @@
 
 La séparation "service/repository" rend le code testable et maintenable.
 """
+
 from typing import List
 from .repository import InMemoryTodoRepository
 from .models import TodoCreate, TodoInDB, TodoUpdate

@@ -3,6 +3,7 @@
 For this pedagogical example we use an in-memory store. In production,
 remplacez par une base de données et adaptez les méthodes (SQLAlchemy/ORM).
 """
+
 from typing import Dict, List, Optional
 from datetime import datetime
 from .models import TodoCreate, TodoInDB, TodoUpdate
