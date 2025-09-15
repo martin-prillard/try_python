@@ -1,0 +1,99 @@
+name: Dependencies
+
+on:
+  schedule:
+    # Run every Monday at 9:00 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Update dependencies
+        run: |
+          uv sync --dev
+          uv run uv lock --upgrade
+
+      - name: Check for updates
+        id: check-updates
+        run: |
+          if git diff --quiet uv.lock; then
+            echo "updates=false" >> $GITHUB_OUTPUT
+          else
+            echo "updates=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.check-updates.outputs.updates == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update dependencies"
+          title: "chore: update dependencies"
+          body: |
+            This PR updates project dependencies to their latest versions.
+            
+            ## Changes
+            - Updated Python dependencies
+            - Updated development dependencies
+            
+            ## Testing
+            - [ ] All tests pass
+            - [ ] Linting passes
+            - [ ] Type checking passes
+          branch: update-dependencies
+          delete-branch: true
+
+  security-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Run safety check
+        run: |
+          uv add safety --dev
+          uv run safety check --json --output safety-report.json || true
+
+      - name: Run bandit security linter
+        run: |
+          uv add bandit --dev
+          uv run bandit -r todo_app -f json -o bandit-report.json || true
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: |
+            safety-report.json
+            bandit-report.json

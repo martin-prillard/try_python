@@ -1,6 +1,6 @@
 .env
 __pycache__
-.mypi_cache
+.mypy_cache
 coverage.xml
 .coverage
 site
