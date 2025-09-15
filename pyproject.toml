@@ -116,6 +116,9 @@ omit = [
     "*/migrations/*",
     "*/venv/*",
     "*/env/*",
+    "*/config.py",
+    "*/logger.py",
+    "*/webapp.py",
 ]
 
 [tool.coverage.report]

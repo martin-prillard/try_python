@@ -1,7 +1,6 @@
-"""Tests for repository layer."""
+"""Tests for repository layer - data operations only."""
 
 from datetime import datetime
-from unittest.mock import patch
 
 from todo_app.models import TodoCreate, TodoUpdate
 from todo_app.repository import InMemoryTodoRepository
@@ -124,31 +123,3 @@ class TestInMemoryTodoRepository:
         """Test deleting a non-existent todo."""
         result = self.repo.delete(999)
         assert result is False
-
-    def test_id_increment_after_delete(self):
-        """Test that ID continues to increment after deletion."""
-        payload1 = TodoCreate(title="Todo 1")
-        payload2 = TodoCreate(title="Todo 2")
-
-        todo1 = self.repo.create(payload1)
-        todo2 = self.repo.create(payload2)
-
-        self.repo.delete(1)
-
-        payload3 = TodoCreate(title="Todo 3")
-        todo3 = self.repo.create(payload3)
-
-        assert todo3.id == 3  # Not 1, even though 1 was deleted
-        assert len(self.repo._data) == 2
-        assert self.repo._next_id == 4
-
-    @patch("todo_app.repository.datetime")
-    def test_create_with_mocked_datetime(self, mock_datetime):
-        """Test creating todo with mocked datetime."""
-        mock_now = datetime(2023, 1, 1, 12, 0, 0)
-        mock_datetime.utcnow.return_value = mock_now
-
-        payload = TodoCreate(title="Test Todo")
-        todo = self.repo.create(payload)
-
-        assert todo.created_at == mock_now

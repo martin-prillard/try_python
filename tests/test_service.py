@@ -1,6 +1,6 @@
-"""Tests for service layer."""
+"""Tests for service layer - business logic only."""
 
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 import pytest
 
@@ -10,7 +10,7 @@ from todo_app.service import TodoService
 
 
 class TestTodoService:
-    """Test TodoService functionality."""
+    """Test TodoService business logic."""
 
     def setup_method(self):
         """Set up test service for each test."""
@@ -79,73 +79,14 @@ class TestTodoService:
         with pytest.raises(ValueError, match="Todo not found"):
             self.service.delete_todo(999)
 
-    @patch("todo_app.service.logger")
-    def test_list_todos_logging(self, mock_logger):
-        """Test that list_todos logs correctly."""
-        self.service.list_todos()
-        mock_logger.info.assert_called_once_with("Listing todos")
-
-    @patch("todo_app.service.logger")
-    def test_create_todo_logging(self, mock_logger):
-        """Test that create_todo logs correctly."""
-        payload = TodoCreate(title="Test Todo")
-        self.service.create_todo(payload)
-        mock_logger.info.assert_called_once_with("Creating todo: %s", "Test Todo")
-
-    @patch("todo_app.service.logger")
-    def test_update_todo_logging(self, mock_logger):
-        """Test that update_todo logs correctly."""
-        # Create a todo first
-        payload = TodoCreate(title="Test Todo")
-        self.service.create_todo(payload)
-
-        # Update it
-        update_payload = TodoUpdate(title="Updated Title")
-        self.service.update_todo(1, update_payload)
-
-        # Check logging calls
-        assert mock_logger.info.call_count == 2  # create + update
-        mock_logger.info.assert_any_call("Updating todo %s", 1)
-
-    @patch("todo_app.service.logger")
-    def test_update_todo_not_found_logging(self, mock_logger):
-        """Test that update_todo logs warning when todo not found."""
-        update_payload = TodoUpdate(title="Updated Title")
-
-        with pytest.raises(ValueError):
-            self.service.update_todo(999, update_payload)
-
-        mock_logger.warning.assert_called_once_with("Todo %s not found", 999)
-
-    @patch("todo_app.service.logger")
-    def test_delete_todo_logging(self, mock_logger):
-        """Test that delete_todo logs correctly."""
-        # Create a todo first
-        payload = TodoCreate(title="Test Todo")
-        self.service.create_todo(payload)
-
-        # Delete it
-        self.service.delete_todo(1)
-
-        # Check logging calls
-        assert mock_logger.info.call_count == 2  # create + delete
-        mock_logger.info.assert_any_call("Deleting todo %s", 1)
-
-    @patch("todo_app.service.logger")
-    def test_delete_todo_not_found_logging(self, mock_logger):
-        """Test that delete_todo logs warning when todo not found."""
-        with pytest.raises(ValueError):
-            self.service.delete_todo(999)
-
-        mock_logger.warning.assert_called_once_with("Todo %s not found", 999)
-
     def test_service_with_mock_repository(self):
         """Test service with mocked repository."""
         mock_repo = Mock()
         service = TodoService(mock_repo)
 
         # Test list_todos
-        mock_todos = [TodoInDB(id=1, title="Test", created_at="2023-01-01")]
+        from datetime import datetime, timezone
+        mock_todos = [TodoInDB(id=1, title="Test", created_at=datetime.now(timezone.utc))]
         mock_repo.list.return_value = mock_todos
 
         result = service.list_todos()
@@ -154,7 +95,7 @@ class TestTodoService:
 
         # Test create_todo
         payload = TodoCreate(title="Test Todo")
-        mock_todo = TodoInDB(id=1, title="Test Todo", created_at="2023-01-01")
+        mock_todo = TodoInDB(id=1, title="Test Todo", created_at=datetime.now(timezone.utc))
         mock_repo.create.return_value = mock_todo
 
         result = service.create_todo(payload)

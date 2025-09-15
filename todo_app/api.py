@@ -5,7 +5,7 @@ On garde des endpoints simples et documentés automatiquement par OpenAPI.
 
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import JSONResponse
 
 from .models import TodoCreate, TodoInDB, TodoUpdate
@@ -14,37 +14,42 @@ from .service import TodoService
 
 app = FastAPI(title="Todo List API", version="0.1.0")
 
-# dependencies (could utiliser injection via Depends si nécessaire)
+# Global repository instance (for production)
 _repo = InMemoryTodoRepository()
 _service = TodoService(_repo)
 
 
+def get_service() -> TodoService:
+    """Dependency to get the service instance."""
+    return _service
+
+
 @app.get("/todos", response_model=list[TodoInDB])
-def list_todos():
+def list_todos(service: TodoService = Depends(get_service)):
     """Liste tous les todos"""
-    return _service.list_todos()
+    return service.list_todos()
 
 
 @app.post("/todos", response_model=TodoInDB, status_code=201)
-def create_todo(payload: TodoCreate):
+def create_todo(payload: TodoCreate, service: TodoService = Depends(get_service)):
     """Créer un todo"""
-    return _service.create_todo(payload)
+    return service.create_todo(payload)
 
 
 @app.patch("/todos/{todo_id}", response_model=TodoInDB)
-def update_todo(todo_id: int, payload: TodoUpdate):
+def update_todo(todo_id: int, payload: TodoUpdate, service: TodoService = Depends(get_service)):
     """Mettre à jour un todo"""
     try:
-        return _service.update_todo(todo_id, payload)
+        return service.update_todo(todo_id, payload)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
 
 
 @app.delete("/todos/{todo_id}", status_code=204)
-def delete_todo(todo_id: int):
+def delete_todo(todo_id: int, service: TodoService = Depends(get_service)):
     """Supprimer un todo"""
     try:
-        _service.delete_todo(todo_id)
+        service.delete_todo(todo_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
 

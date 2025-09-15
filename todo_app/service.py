@@ -3,7 +3,6 @@
 La séparation "service/repository" rend le code testable et maintenable.
 """
 
-
 from .logger import logger
 from .models import TodoCreate, TodoInDB, TodoUpdate
 from .repository import InMemoryTodoRepository

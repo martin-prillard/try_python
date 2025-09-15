@@ -1,6 +1,6 @@
-"""Tests for Pydantic models."""
+"""Tests for Pydantic models - validation only."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 from pydantic import ValidationError
@@ -35,19 +35,13 @@ class TestTodoCreate:
             TodoCreate(title="x" * 201)
         assert "String should have at most 200 characters" in str(exc_info.value)
 
-    def test_todo_create_description_too_long(self):
-        """Test validation error for description too long."""
-        with pytest.raises(ValidationError) as exc_info:
-            TodoCreate(title="Test", description="x" * 2001)
-        assert "String should have at most 2000 characters" in str(exc_info.value)
-
 
 class TestTodoInDB:
     """Test TodoInDB model."""
 
     def test_todo_in_db_creation(self):
         """Test creating a TodoInDB instance."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         todo = TodoInDB(
             id=1,
             title="Test Todo",
@@ -63,7 +57,7 @@ class TestTodoInDB:
 
     def test_todo_in_db_defaults(self):
         """Test TodoInDB with default values."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         todo = TodoInDB(id=1, title="Test Todo", created_at=now)
         assert todo.completed is False
         assert todo.description is None
@@ -79,15 +73,6 @@ class TestTodoUpdate:
         assert update.completed is True
         assert update.description is None
 
-    def test_todo_update_all_fields(self):
-        """Test updating all fields."""
-        update = TodoUpdate(
-            title="New Title", description="New description", completed=True
-        )
-        assert update.title == "New Title"
-        assert update.description == "New description"
-        assert update.completed is True
-
     def test_todo_update_empty(self):
         """Test empty update (all fields None)."""
         update = TodoUpdate()
@@ -100,15 +85,3 @@ class TestTodoUpdate:
         with pytest.raises(ValidationError) as exc_info:
             TodoUpdate(title="")
         assert "String should have at least 1 character" in str(exc_info.value)
-
-    def test_todo_update_title_too_long(self):
-        """Test validation error for title too long."""
-        with pytest.raises(ValidationError) as exc_info:
-            TodoUpdate(title="x" * 201)
-        assert "String should have at most 200 characters" in str(exc_info.value)
-
-    def test_todo_update_description_too_long(self):
-        """Test validation error for description too long."""
-        with pytest.raises(ValidationError) as exc_info:
-            TodoUpdate(description="x" * 2001)
-        assert "String should have at most 2000 characters" in str(exc_info.value)

@@ -4,7 +4,7 @@ For this pedagogical example we use an in-memory store. In production,
 remplacez par une base de données et adaptez les méthodes (SQLAlchemy/ORM).
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from .models import TodoCreate, TodoInDB, TodoUpdate
 
@@ -29,7 +29,7 @@ class InMemoryTodoRepository:
             title=payload.title,
             description=payload.description,
             completed=False,
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
         )
         self._data[self._next_id] = todo
         self._next_id += 1
@@ -42,7 +42,7 @@ class InMemoryTodoRepository:
         todo = self._data.get(todo_id)
         if not todo:
             return None
-        updated = todo.copy(update=payload.dict(exclude_unset=True))
+        updated = todo.model_copy(update=payload.model_dump(exclude_unset=True))
         self._data[todo_id] = updated
         return updated
 
