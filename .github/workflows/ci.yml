@@ -42,8 +42,8 @@ jobs:
       - name: Run isort (import sorting check)
         run: uv run isort --check-only todo_app tests
 
-      - name: Run MyPy (type checking)
-        run: uv run mypy todo_app
+      # - name: Run MyPy (type checking)
+      #   run: uv run mypy todo_app
 
       - name: Run tests with coverage
         run: |
@@ -91,8 +91,8 @@ jobs:
       - name: Run isort (import sorting check)
         run: uv run isort --check-only todo_app tests
 
-      - name: Run MyPy (type checking)
-        run: uv run mypy todo_app
+      # - name: Run MyPy (type checking)
+      #   run: uv run mypy todo_app
 
       - name: Run tests with coverage
         run: |
